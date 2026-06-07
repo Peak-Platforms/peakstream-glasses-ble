@@ -1,0 +1,30 @@
+{
+  "name": "peakstream-pov",
+  "version": "1.0.0",
+  "private": true,
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@mentra/bluetooth-sdk": "0.1.9",
+    "expo": "~55.0.24",
+    "expo-audio": "~55.0.14",
+    "expo-build-properties": "~55.0.14",
+    "expo-dev-client": "~55.0.34",
+    "expo-file-system": "~55.0.20",
+    "expo-linear-gradient": "~55.0.14",
+    "expo-video": "~55.0.17",
+    "react": "19.2.0",
+    "react-native": "0.83.6",
+    "react-native-safe-area-context": "~5.6.2",
+    "react-native-svg": "15.15.3",
+    "react-native-webview": "13.16.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.0",
+    "typescript": "~5.9.2"
+  }
+}
