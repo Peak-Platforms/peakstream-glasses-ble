@@ -6,10 +6,6 @@
  * the Mentra SDK picks the protocol automatically from the URL prefix.
  *     rtmp://...   -> RTMP
  *     https://...  -> WebRTC (WHIP)
- *
- * HOW TO USE: set this as your app's main/home screen, replacing the
- * example app's busy demo UI. Keep the example's SDK init + permissions
- * (in app.json) — only the on-screen UI is being simplified here.
  */
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {View, Text, Pressable, StyleSheet, ActivityIndicator} from 'react-native';
@@ -26,7 +22,8 @@ const ENDPOINTS = {
 
 export default function BroadcasterScreen() {
   const mentra = useMentraBluetooth();
-  const connected = mentra.glasses.connected;
+  // Defensive: SDK state may be undefined on the very first render.
+  const connected = mentra?.glasses?.connected ?? false;
 
   const [busy, setBusy] = useState(false);
   const [live, setLive] = useState(false);
@@ -36,9 +33,6 @@ export default function BroadcasterScreen() {
   const streamIdRef = useRef<string | null>(null);
   const keepAliveRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Surface stream lifecycle / errors coming back from the glasses.
-  // NOTE: confirm the exact payload field names by logging one event;
-  // the handler is defensive so it works either way.
   useBluetoothEvent('stream_status', (e: any) => {
     const s = e?.status ?? e?.state ?? JSON.stringify(e);
     setStatus(String(s));
@@ -52,12 +46,10 @@ export default function BroadcasterScreen() {
       const devices = await BluetoothSdk.scan(DeviceModels.MentraLive, {
         timeoutMs: 10000,
       });
-      if (!devices.length) {
+      if (!devices || !devices.length) {
         setStatus('No glasses found');
         return;
       }
-      // Single-operator app: connect to the first Mentra Live found.
-      // (In a multi-glasses room you'd show a picker instead.)
       await BluetoothSdk.connect(devices[0]);
       setStatus('Connected');
     } catch (err: any) {
@@ -75,12 +67,10 @@ export default function BroadcasterScreen() {
 
       await BluetoothSdk.startStream({
         type: 'start_stream',
-        streamUrl: ENDPOINTS[protocol], // protocol auto-selected from prefix
+        streamUrl: ENDPOINTS[protocol],
         streamId,
       });
 
-      // keepAlive is ON by default — must ping every ~15s or the glasses
-      // tear the stream down.
       keepAliveRef.current = setInterval(() => {
         if (streamIdRef.current) {
           BluetoothSdk.keepStreamAlive({
@@ -109,13 +99,12 @@ export default function BroadcasterScreen() {
     try {
       await BluetoothSdk.stopStream();
     } catch {
-      // ignore — already stopped
+      // already stopped
     }
     setLive(false);
     setStatus('Stopped');
   }, []);
 
-  // Clean up the keep-alive timer if the screen unmounts.
   useEffect(() => () => stopLive(), [stopLive]);
 
   return (
