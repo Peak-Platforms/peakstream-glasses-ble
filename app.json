@@ -3,12 +3,14 @@
     "name": "PeakStream POV",
     "slug": "peakstream-glasses-ble",
     "version": "1.0.0",
-    "orientation": "portrait",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/PeakStream_POV_logo.png",
+    "orientation": "default",
+    "userInterfaceStyle": "dark",
     "splash": {
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
+      "image": "./assets/PeakStream_POV_logo.png",
+    "resizeMode": "contain",
+    "backgroundColor": "#0a0a0a"
+},
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.peakplatforms.peakstreampov",
